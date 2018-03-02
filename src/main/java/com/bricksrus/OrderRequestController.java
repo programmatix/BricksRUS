@@ -8,6 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * REST service to handle all order requests, and return order references.
@@ -55,6 +58,17 @@ class OrderRequestController {
         else {
             return new ResponseEntity<>(ref, HttpStatus.OK);
         }
+    }
+
+    /**
+     * Returns order details for all existing orders.
+     *
+     * @return JSON containing the order details, in the form [{"id":XXX,"numBricks":XXX},...]
+     */
+    @RequestMapping(value = ENDPOINT_ORDER, method = RequestMethod.GET)
+    public ResponseEntity<List<OrderReference>> listAllOrders() {
+        List<OrderReference> refs = orderService.findAll();
+        return new ResponseEntity<>(refs, HttpStatus.OK);
     }
 
 

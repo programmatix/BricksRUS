@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
@@ -52,5 +54,20 @@ public class OrderServiceTest {
 
         assertEquals(fetched.getId(), ref.getId());
         assertEquals(fetched.getNumBricks(), ref.getNumBricks());
+    }
+
+    @Test
+    public void findAll_NoOrders_ShouldBeEmpty() {
+        List<OrderReference> refs = orderService.findAll();
+        assertEquals(refs.size(), 0);
+    }
+
+    @Test
+    public void findAll_OrdersPresent_ShouldExistAndBeSorted() {
+        createOrder(100);
+        createOrder(500);
+        List<OrderReference> refs = orderService.findAll();
+        assertEquals(refs.size(), 2);
+        assertTrue(refs.get(0).getId() < refs.get(1).getId());
     }
 }

@@ -5,14 +5,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Handles operations on OrderReferences: creation, getting, etc.
  */
 @Service
-public class OrderService
-{
+public class OrderService {
     private static final Logger log = LoggerFactory.getLogger(OrderService.class);
 
     @Autowired
@@ -37,10 +39,22 @@ public class OrderService
 
     /**
      * Returns the OrderReference for an existing order.
+     *
      * @param id A valid order reference id
      * @return null if an invalid order reference was provided, else the corresponding OrderReference.
      */
     public OrderReference findById(int id) {
         return orderReferences.findOne(id);
+    }
+
+    /**
+     * Returns all existing OrderReferences as a List, sorted by their ids.
+     */
+    public List<OrderReference> findAll() {
+        Iterable<OrderReference> refs = orderReferences.findAll();
+        List<OrderReference> out = new ArrayList<>();
+        refs.forEach(ref -> out.add(ref));
+        Collections.sort(out);
+        return out;
     }
 }

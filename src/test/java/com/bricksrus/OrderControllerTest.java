@@ -1,6 +1,8 @@
 package com.bricksrus;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,15 @@ public class OrderControllerTest {
 
     @Autowired
     private MockMvc mvc;
+
+    @Autowired
+    private OrderReferenceRepository orderReferenceRepository;
+
+    @Before
+    public void before() {
+        // Clear all data between every test
+        orderReferenceRepository.deleteAll();
+    }
 
     @Test
     public void createOrder_1000Bricks_ShouldReturnOrderRef() throws Exception {
@@ -93,6 +104,58 @@ public class OrderControllerTest {
 
         assertEquals(id, returnedId);
         assertEquals(returnedNumBricks, numBricksToCreate);
+    }
+
+    @Test
+    public void getAllOrders_NoOrdersExist_ShouldSucceed() throws Exception {
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONArray obj = new JSONArray(result.getResponse().getContentAsString());
+        assertEquals(0, obj.length());
+    }
+
+    @Test
+    public void getAllOrders_1Order_ShouldSucceed() throws Exception {
+        int id = createOrder(500);
+
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONArray obj = new JSONArray(result.getResponse().getContentAsString());
+
+        assertEquals(1, obj.length());
+        JSONObject first = (JSONObject) obj.get(0);
+        assertEquals(id, first.getInt("id"));
+        assertEquals(500, first.getInt("numBricks"));
+    }
+
+    @Test
+    public void getAllOrders_2Orders_ShouldSucceed() throws Exception {
+        int id1 = createOrder(500);
+        int id2 = createOrder(1000);
+
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONArray obj = new JSONArray(result.getResponse().getContentAsString());
+
+        assertEquals(2, obj.length());
+
+        JSONObject first = (JSONObject) obj.get(0);
+        JSONObject second = (JSONObject) obj.get(1);
+
+        // The orders are guaranteed to be sorted by their ids
+        assertEquals(id1, first.getInt("id"));
+        assertEquals(500, first.getInt("numBricks"));
+        assertEquals(id2, second.getInt("id"), id2);
+        assertEquals(1000, second.getInt("numBricks"));
     }
 
 }

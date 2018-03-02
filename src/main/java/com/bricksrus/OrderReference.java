@@ -12,7 +12,7 @@ import java.util.UUID;
  * It's persisted to database.
  */
 @Entity
-public class OrderReference {
+public class OrderReference implements Comparable<OrderReference> {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
@@ -35,5 +35,10 @@ public class OrderReference {
     @Override
     public String toString() {
         return String.format("uuid=%d bricks=%d", id, numBricks);
+    }
+
+    @Override
+    public int compareTo(OrderReference ref) {
+        return Integer.compare(id, ref.id);
     }
 }
