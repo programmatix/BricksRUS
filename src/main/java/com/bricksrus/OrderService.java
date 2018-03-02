@@ -34,4 +34,13 @@ public class OrderService
 
         return orderReference;
     }
+
+    /**
+     * Returns the OrderReference for an existing order.
+     * @param id A valid order reference id
+     * @return null if an invalid order reference was provided, else the corresponding OrderReference.
+     */
+    public OrderReference findById(int id) {
+        return orderReferences.findOne(id);
+    }
 }

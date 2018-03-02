@@ -39,4 +39,18 @@ public class OrderServiceTest {
         assertEquals(orderReferenceRepository.count(), 1);
         assertEquals(orderReferenceRepository.findOne(ref.getId()).getNumBricks(), 1000);
     }
+
+    private OrderReference createOrder(int numBricks) {
+        CreateOrderRequest req = new CreateOrderRequest(1000);
+        return orderService.createOrder(req);
+    }
+
+    @Test
+    public void getOrder() {
+        OrderReference ref = createOrder(10000);
+        OrderReference fetched = orderService.findById(ref.getId());
+
+        assertEquals(fetched.getId(), ref.getId());
+        assertEquals(fetched.getNumBricks(), ref.getNumBricks());
+    }
 }

@@ -29,7 +29,7 @@ public class OrderControllerTest {
     public void createOrder_1000Bricks_ShouldReturnOrderRef() throws Exception {
         MvcResult result = mvc.perform(
                 MockMvcRequestBuilders.post(OrderRequestController.ENDPOINT_ORDER)
-                        .content("{\"numBricks\":\"1000\"}")
+                        .content("{\"numBricks\":1000}")
                         .contentType("application/json")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
@@ -50,9 +50,49 @@ public class OrderControllerTest {
     public void createOrder_NegativeBricks_ShouldFail() throws Exception {
         mvc.perform(
                 MockMvcRequestBuilders.post(OrderRequestController.ENDPOINT_ORDER)
-                        .param("numBricks", "-1")
+                        .content("{\"numBricks\":-1}")
+                        .contentType("application/json")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError()).andReturn();
+    }
+
+    private int createOrder(int numBricks) throws Exception {
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.post(OrderRequestController.ENDPOINT_ORDER)
+                        .content("{\"numBricks\":" + numBricks + "}")
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONObject obj = new JSONObject(result.getResponse().getContentAsString());
+        int id = obj.getInt("id");
+        return id;
+    }
+
+    @Test
+    public void getOrder_InvalidId_ShouldFail() throws Exception {
+        mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER + "10000")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError()).andReturn();
+    }
+
+    @Test
+    public void getOrder_GoodId_ShouldSucceed() throws Exception {
+        int numBricksToCreate = 10000;
+        int id = createOrder(numBricksToCreate);
+
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER + id)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONObject obj = new JSONObject(result.getResponse().getContentAsString());
+        int returnedId = obj.getInt("id");
+        int returnedNumBricks = obj.getInt("numBricks");
+
+        assertEquals(id, returnedId);
+        assertEquals(returnedNumBricks, numBricksToCreate);
     }
 
 }

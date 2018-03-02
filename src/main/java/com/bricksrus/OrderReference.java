@@ -1,5 +1,7 @@
 package com.bricksrus;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.annotation.Generated;
 import javax.persistence.*;
 import java.util.UUID;
@@ -27,6 +29,7 @@ public class OrderReference {
 
     public int getId() { return id; }
     public int getNumBricks() { return numBricks; }
+    @JsonIgnore
     public JustOrderReference getJustOrderReference() { return new JustOrderReference(id); }
 
     @Override
