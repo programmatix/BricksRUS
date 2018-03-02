@@ -35,3 +35,8 @@ curl http://localhost:8080/api/order/
 [{"id":1,"numBricks":1000},{"id":2,"numBricks":500}]
 ```
 
+Update an order:
+```
+curl -X PUT -H "Content-Type: application/json" -d '{"numBricks":2000}' http://localhost:8080/api/order/1
+{"id":1}
+```

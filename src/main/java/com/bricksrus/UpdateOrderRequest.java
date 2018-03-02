@@ -8,6 +8,7 @@ import javax.validation.constraints.Min;
  */
 public class UpdateOrderRequest {
     // Seems silly to create an order for 0 bricks, and less is obviously illegal.
+    // Arguably 0 could represent deleting an order, but this would be better represented with a proper DELETE endpoint
     @Min(1)
     private int numBricks;
 
