@@ -29,6 +29,7 @@ public class OrderReference implements Comparable<OrderReference> {
 
     public int getId() { return id; }
     public int getNumBricks() { return numBricks; }
+    public void setNumBricks(int numBricks) { this.numBricks = numBricks; }
     @JsonIgnore
     public JustOrderReference getJustOrderReference() { return new JustOrderReference(id); }
 

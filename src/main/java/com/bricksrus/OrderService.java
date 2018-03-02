@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Handles operations on OrderReferences: creation, getting, etc.
@@ -41,10 +38,11 @@ public class OrderService {
      * Returns the OrderReference for an existing order.
      *
      * @param id A valid order reference id
-     * @return null if an invalid order reference was provided, else the corresponding OrderReference.
+     * @return an Optional containing None if an invalid order reference was provided, else the corresponding OrderReference.
      */
-    public OrderReference findById(int id) {
-        return orderReferences.findOne(id);
+    public Optional<OrderReference> findById(int id) {
+        OrderReference out = orderReferences.findOne(id);
+        return out == null ? Optional.empty() : Optional.of(out);
     }
 
     /**
@@ -56,5 +54,29 @@ public class OrderService {
         refs.forEach(ref -> out.add(ref));
         Collections.sort(out);
         return out;
+    }
+
+    /**
+     * Updates an existing order with a new quantity of bricks.
+     *
+     * @return an Optional containing None if an invalid order reference was provided, else the corresponding OrderReference,
+     *  updated with the new values.
+     */
+    public Optional<OrderReference> updateOrder(int id, UpdateOrderRequest request) {
+        Optional<OrderReference> orderReferenceOpt = findById(id);
+
+        if (orderReferenceOpt.isPresent()) {
+            OrderReference ref = orderReferenceOpt.get();
+
+            ref.setNumBricks(request.getNumBricks());
+            orderReferences.save(ref);
+
+            log.info(String.format("Updating order {%d}, to {%s}", id, request));
+
+            return Optional.of(ref);
+        }
+        else {
+            return orderReferenceOpt;
+        }
     }
 }

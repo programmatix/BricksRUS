@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.UUID;
-
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -158,4 +156,31 @@ public class OrderControllerTest {
         assertEquals(1000, second.getInt("numBricks"));
     }
 
+    @Test
+    public void updateOrder_OrderExists_ShouldSucceed() throws Exception {
+        int id = createOrder(1000);
+
+        MvcResult result = mvc.perform(
+                MockMvcRequestBuilders.put(OrderRequestController.ENDPOINT_ORDER + id)
+                        .content("{\"numBricks\":2000}")
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONObject obj = new JSONObject(result.getResponse().getContentAsString());
+        int idReturned = obj.getInt("id");
+
+        assertEquals(idReturned, id);
+
+        // Now get all orders to check
+        MvcResult resultAll = mvc.perform(
+                MockMvcRequestBuilders.get(OrderRequestController.ENDPOINT_ORDER)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk()).andReturn();
+
+        JSONArray results = new JSONArray(resultAll.getResponse().getContentAsString());
+        assertEquals(1, results.length());
+        JSONObject first = (JSONObject) results.get(0);
+        assertEquals(2000, first.getInt("numBricks"));
+    }
 }
