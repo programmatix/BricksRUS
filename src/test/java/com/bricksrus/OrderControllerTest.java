@@ -183,4 +183,26 @@ public class OrderControllerTest {
         JSONObject first = (JSONObject) results.get(0);
         assertEquals(2000, first.getInt("numBricks"));
     }
+
+    @Test
+    public void updateOrder_BadRequest_ShouldFail() throws Exception {
+        int id = createOrder(1000);
+
+        mvc.perform(
+                MockMvcRequestBuilders.put(OrderRequestController.ENDPOINT_ORDER + id)
+                        .content("{\"numBricks\":0}")
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError()).andReturn();
+    }
+
+    @Test
+    public void updateOrder_OrderDoesNotExist_ShouldFail() throws Exception {
+        mvc.perform(
+                MockMvcRequestBuilders.put(OrderRequestController.ENDPOINT_ORDER + 1000)
+                        .content("{\"numBricks\":1000}")
+                        .contentType("application/json")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError()).andReturn();
+    }
 }
