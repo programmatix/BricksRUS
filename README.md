@@ -1,6 +1,13 @@
 # Bricks-R-US
 A simple Spring service exposing a REST interface for ordering bricks for a fictional brick company, Bricks-R-US. Written for a tech test.
 
+## Current Status
+This project implements stages 1 and 2 of the provided spec.
+
+For stage 3 I'd look to add a new 'dispatched' parameter to OrderReference, and update and persist this on a Fulfil Order request.
+
+Stage 4 will involve checking this parameter and handling the error appropriately.
+
 ## Getting Started
 Clone the project, then run the app with:
 ```
@@ -27,3 +34,4 @@ Get all orders back:
 curl http://localhost:8080/api/order/
 [{"id":1,"numBricks":1000},{"id":2,"numBricks":500}]
 ```
+
