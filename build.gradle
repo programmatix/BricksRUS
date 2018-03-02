@@ -1,0 +1,38 @@
+group 'com.bricksrus'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.10.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+    // Spring Boot to get a REST server up ASAP
+    compile("org.springframework.boot:spring-boot-starter-web")
+
+    // Make testing and working with Spring easier
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile("org.springframework.boot:spring-boot-devtools")
+
+    // Spring JPA for managing the H2 database
+    compile("org.springframework.boot:spring-boot-starter-data-jpa")
+
+    // We use H2 database in in-memory mode to demonstrate some realistic database work without requiring whoever runs
+    // this code to configure a heavier database.  Of course, in-mem means the data won't persist across restarts.
+    compile("com.h2database:h2")
+}

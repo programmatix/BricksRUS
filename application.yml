@@ -1,0 +1,32 @@
+###
+#   Database Settings
+#   These are copied from the example at https://memorynotfound.com/spring-boot-spring-data-jpa-hibernate-h2-web-console/
+###
+spring:
+  datasource:
+    url: jdbc:h2:mem:bricksrus;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    platform: h2
+    username: sa
+    password:
+    driverClassName: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        use_sql_comments: true
+        format_sql: true
+
+###
+#   H2 Settings
+#   Setup a very handy database console on /console.  Obviously this would be locked down for a production app.
+###
+  h2:
+    console:
+      enabled: true
+      path: /console
+      settings:
+        trace: false
+        web-allow-others: false
